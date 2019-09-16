@@ -79,9 +79,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.9.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\..\..\Protoy\Packages\Aegis\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -99,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculate\HighResolutionTimer.cs" />
-    <Compile Include="Data\Json\JsonConverter.cs" />
     <Compile Include="Data\Json\JsonExtensions.cs" />
     <Compile Include="Data\Mapper.cs" />
     <Compile Include="Data\MSSQL\ConnectionPool.cs" />
@@ -121,7 +119,7 @@
     <Compile Include="Network\HttpRequestData.cs" />
     <Compile Include="Network\UDPClient.cs" />
     <Compile Include="Network\UDPServer.cs" />
-    <Compile Include="Calculate\ConvertMethods.cs" />
+    <Compile Include="Calculate\Converters.cs" />
     <Compile Include="Data\MySQL\DBCommand.cs" />
     <Compile Include="Data\MySQL\DBConnector.cs" />
     <Compile Include="Data\MySQL\ConnectionPool.cs" />

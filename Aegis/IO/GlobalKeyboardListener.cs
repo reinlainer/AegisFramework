@@ -10,6 +10,13 @@ namespace Aegis.IO
     public class GlobalKeyboardListener
     {
         public event EventHandler<GlobalKeyboardListenerEventArgs> KeyboardPressed;
+        public bool IsLCtrlPressing { get; private set; } = false;
+        public bool IsRCtrlPressing { get; private set; } = false;
+        public bool IsLAltPressing { get; private set; } = false;
+        public bool IsRAltPressing { get; private set; } = false;
+        public bool IsLShiftPressing { get; private set; } = false;
+        public bool IsRShiftPressing { get; private set; } = false;
+
 
         private IntPtr _windowsHookHandle;
         private IntPtr _user32LibraryHandle;
@@ -112,7 +119,6 @@ namespace Aegis.IO
 
         public const int WH_KEYBOARD_LL = 13;
         public const int HC_ACTION = 0;
-
         public enum KeyboardState
         {
             KeyDown = 0x0100,
@@ -133,19 +139,74 @@ namespace Aegis.IO
         public IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             bool fEatKeyStroke = false;
-
             var wParamTyped = wParam.ToInt32();
+
             if (Enum.IsDefined(typeof(KeyboardState), wParamTyped))
             {
                 LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent)Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
                 var eventArguments = new GlobalKeyboardListenerEventArgs(p, (KeyboardState)wParamTyped);
                 EventHandler<GlobalKeyboardListenerEventArgs> handler = KeyboardPressed;
+
+                CheckKeys(eventArguments);
                 handler?.Invoke(this, eventArguments);
 
                 fEatKeyStroke = eventArguments.Handled;
             }
 
             return fEatKeyStroke ? (IntPtr)1 : SystemDll.User32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        }
+
+
+        private void CheckKeys(GlobalKeyboardListenerEventArgs e)
+        {
+            //  LCtrl
+            if (e.KeyboardData.VirtualCode == 162)
+            {
+                if (e.KeyboardState == KeyboardState.KeyDown)
+                    IsLCtrlPressing = true;
+                if (e.KeyboardState == KeyboardState.KeyUp)
+                    IsLCtrlPressing = false;
+            }
+            //  RCtrl
+            if (e.KeyboardData.VirtualCode == 25)
+            {
+                if (e.KeyboardState == KeyboardState.KeyDown)
+                    IsRCtrlPressing = true;
+                if (e.KeyboardState == KeyboardState.KeyUp)
+                    IsRCtrlPressing = false;
+            }
+            //  LAlt
+            if (e.KeyboardData.VirtualCode == 164)
+            {
+                if (e.KeyboardState == KeyboardState.SysKeyDown || e.KeyboardState == KeyboardState.KeyDown)
+                    IsLAltPressing = true;
+                if (e.KeyboardState == KeyboardState.SysKeyUp || e.KeyboardState == KeyboardState.KeyUp)
+                    IsLAltPressing = false;
+            }
+            //  RAlt
+            if (e.KeyboardData.VirtualCode == 21)
+            {
+                if (e.KeyboardState == KeyboardState.SysKeyDown || e.KeyboardState == KeyboardState.KeyDown)
+                    IsRAltPressing = true;
+                if (e.KeyboardState == KeyboardState.SysKeyUp || e.KeyboardState == KeyboardState.KeyUp)
+                    IsRAltPressing = false;
+            }
+            //  LShift
+            if (e.KeyboardData.VirtualCode == 160)
+            {
+                if (e.KeyboardState == KeyboardState.KeyDown)
+                    IsLShiftPressing = true;
+                if (e.KeyboardState == KeyboardState.KeyUp)
+                    IsLShiftPressing = false;
+            }
+            //  RShift
+            if (e.KeyboardData.VirtualCode == 161)
+            {
+                if (e.KeyboardState == KeyboardState.KeyDown)
+                    IsRShiftPressing = true;
+                if (e.KeyboardState == KeyboardState.KeyUp)
+                    IsRShiftPressing = false;
+            }
         }
     }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Aegis.Calculate
 {
-    public static class ConvertMethods
+    public static class Converters
     {
         #region string
         public static bool ToBoolean(this string src)
