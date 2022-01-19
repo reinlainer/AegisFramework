@@ -10,7 +10,7 @@ namespace Aegis.Data.Json
 {
     public static class JsonExtensions
     {
-        public static JProperty GetProperty(this JToken src, string path, bool exceptionWhenResultIsNull = true)
+        public static JProperty GetProperty(this JToken src, string path)
         {
             JToken currentToken = src;
             foreach (var key in path.Split(new char[] { '/', '\\' }))
@@ -40,10 +40,50 @@ namespace Aegis.Data.Json
             }
 
 
-            if (exceptionWhenResultIsNull == true && currentToken == null)
+            if (currentToken == null)
                 throw new AegisException(AegisResult.Json_KeyNotContain, "'{0}' key is not contains.", path);
 
             return (currentToken?.Parent as JProperty);
+        }
+
+
+        public static void SetProperty(this JToken src, string path, JObject value)
+        {
+            JToken currentToken = src;
+            foreach (var key in path.Split(new char[] { '/', '\\' }))
+            {
+                if (key.Length == 0)
+                    continue;
+
+
+                if (currentToken is JValue)
+                    throw new AegisException(AegisResult.Json_InvalidPath, "Invalid path.");
+                if (currentToken is JArray)
+                {
+                    JArray array = currentToken as JArray;
+                    int index = key.ToInt32(-1);
+
+                    if (index == -1 || index >= array.Count)
+                        throw new AegisException(AegisResult.Json_InvalidKey, "Invalid index of array({0}).", index);
+
+                    currentToken = array[index];
+                    continue;
+                }
+
+
+                if (currentToken[key] == null)
+                {
+                    if (currentToken is JObject)
+                    {
+                        JObject jobj = currentToken as JObject;
+                        JProperty jprop = new JProperty(key, new JObject());
+                        jobj.Add(jprop);
+                        currentToken = jprop.Value;
+                    }
+                }
+                else
+                    currentToken = currentToken[key];
+            }
         }
 
 
@@ -52,7 +92,7 @@ namespace Aegis.Data.Json
             return (token == null) ||
                    (token.Type == JTokenType.Array && !token.HasValues) ||
                    (token.Type == JTokenType.Object && !token.HasValues) ||
-                   (token.Type == JTokenType.String && token.ToString() == String.Empty) ||
+                   (token.Type == JTokenType.String && token.ToString() == string.Empty) ||
                    (token.Type == JTokenType.Null);
         }
 
@@ -170,6 +210,7 @@ namespace Aegis.Data.Json
 
         public static void SetValue(this JToken token, string path, int val)
         {
+            token.SetProperty(path, null);
             token.GetProperty(path).Value = val;
         }
 

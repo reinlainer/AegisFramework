@@ -8,6 +8,7 @@ using Aegis.Calculate;
 
 namespace Aegis.Data
 {
+    [Obsolete]
     [DebuggerDisplay("Name={Name} Value={Value}")]
     public partial class TreeNode<T>
     {

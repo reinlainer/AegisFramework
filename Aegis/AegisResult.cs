@@ -36,8 +36,9 @@ namespace Aegis
 
         //  Json Error
         public const int Json_InvalidKey = 60;
-        public const int Json_DuplicateKey = 61;
-        public const int Json_KeyNotContain = 62;
+        public const int Json_InvalidPath = 61;
+        public const int Json_DuplicateKey = 62;
+        public const int Json_KeyNotContain = 63;
     }
 
 
