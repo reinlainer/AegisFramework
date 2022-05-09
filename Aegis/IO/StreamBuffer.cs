@@ -413,6 +413,15 @@ namespace Aegis.IO
         }
 
 
+        public byte[] Read(int index, int length)
+        {
+            byte[] destination = new byte[length];
+
+            Array.Copy(Buffer, index, destination, 0, length);
+            return destination;
+        }
+
+
         public bool GetBoolean()
         {
             if (ReadBytes + sizeof(bool) > WrittenBytes)
